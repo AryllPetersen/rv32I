@@ -9,9 +9,9 @@ typedef enum logic {
   MEM = 1'b1
 } irsel_t;
 
-typedef enum logic {
-  ALU = 1'b0,
-  MEM = 1'b1,
+typedef enum logic[1:0] {
+  ALU = 2'h0,
+  MEM = 2'h1,
 } regsel_t;
 
 typedef enum logic {
