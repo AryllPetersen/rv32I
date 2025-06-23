@@ -61,16 +61,21 @@ typedef struct packed {
   logic[6:0] opcode
 } ir_U_t;
 
-typedef enum logic {
+typedef enum logic[3:0] {
   ADD,
   SUB,
   XOR,
   OR,
   AND,
   SLL,
-  SRL
+  SRL,
   SRA,
   SLT,
-  SLTU,
+  SLTU
+} operations_t;
+
+typedef stuct packed {
+  operations_t oper,
+  logic
 } op;
 
