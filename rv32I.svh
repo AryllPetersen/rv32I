@@ -103,13 +103,16 @@ typedef struct packed {
 
 typedef enum logic {
   RS1 = 1'b0,
-  RSD = 1'b1,
+  RSD = 1'b1
 } rs1sel_t;
 
-typedef enum logic[1:0]{
-  FETCH = 2'h0,
-  PART1 = 2'h1,
-  PART2 = 2'h2,
-  PART3 = 2'h3
-} state_t;
+typedef enum logic {
+  TMPSEL_BYTE = 1'b0,
+  TMPSEL_HALF = 1'b1
+} tmpsel_t;
+
+typedef enum logic {
+  DATAINSEL_ALU = 1'b0,
+  DATAINSEL_TMP = 1'b1
+} datainsel_t;
 

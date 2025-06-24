@@ -14,7 +14,9 @@ module ControlUnit(
   output operation_t op,
   output logic we, re,
   output addrsel_t addrsel,
-  output rs1sel_t rs1sel
+  output rs1sel_t rs1sel,
+  output tmpsel_t tmpsel,
+  output datainsel_t datainsel
 );
 
   enum logic[1:0]{
@@ -28,12 +30,12 @@ module ControlUnit(
 
     // default values
     {pcsel, irsel, regsel, regen, alusel0, alusel1,
-      op, we, re, addrsel, inst_fetched_d, rs1_sel, 
+      op, we, re, addrsel, rs1sel, tmpsel, datainsel, 
       state_d} = '0;
 
     case({ir.opcode, ir.funct3, ir.funct7, state}) inside
 
-      {7'b???_????, 10'b??_????_????, FETCH} begin
+      {7'b???_????, 10'b??_????_????, FETCH}: begin
 
         // get new instruction
         {pcsel, irsel, addrsel, re, we} = 
@@ -44,10 +46,10 @@ module ControlUnit(
       end
 
       // OP Instructions
-      {OP, ADD, PART1}, {OP, SUB, PART1}, {OP, XOR, PART1}, 
-      {OP, OR, PART1},  {OP, AND, PART1}, {OP, SLL, PART1}, 
-      {OP, SRL, PART1}, {OP, SRA, PART1}, {OP, SLT, PART1}, 
-      {OP, SLTU, PART1}: begin
+      {OP, ADD  , PART1}, {OP, SUB, PART1}, {OP, XOR, PART1}, 
+      {OP, OR   , PART1}, {OP, AND, PART1}, {OP, SLL, PART1}, 
+      {OP, SRL  , PART1}, {OP, SRA, PART1}, {OP, SLT, PART1}, 
+      {OP, SLTU , PART1}: begin
 
         // get new instruction
         {pcsel, irsel, addrsel, re, we} = 
@@ -63,7 +65,7 @@ module ControlUnit(
         rs1sel = RS1;
 
         // operation for the alu to perfrom
-        op = operation_t'({instruction.funct3, instruction.funct7});
+        op = operation_t'({ir.funct3, ir.funct7});
 
         // next state
         state_d = PART1;
@@ -87,21 +89,21 @@ module ControlUnit(
         // set alu inputs to be from register file and IR
         alusel0 = ALUSEL0_REG;
         alusel1 = ALUSEL1_IR;
-        rs1_sel = RS1;
+        rs1sel = RS1;
 
         // operation for the alu to perfrom
-        op = operation_t'({instruction.funct3, instruction.funct7});
+        op = operation_t'({ir.funct3, ir.funct7});
 
         // next state
         state_d = PART1;
       end  
 
-      // LOAD instructions (Part 1)
+      // LOAD instruction (Part 1)
       {LOAD, BYTE , 7'b???_????, PART1}, {LOAD, HALF  , 7'b???_????, PART1},
       {LOAD, WORD , 7'b???_????, PART1}, {LOAD, BYTEU , 7'b???_????, PART1},
       {LOAD, HALFU, 7'b???_????, PART1}: begin
 
-        // read value from memory
+        // read value from memory at address calculated by ALU
         {pcsel, irsel, addrsel, re, we} = 
           {PCSEL_PC, IRSEL_IR, ADDRSEL_ALU, 1'b1, 1'b0};
 
@@ -112,7 +114,7 @@ module ControlUnit(
         // set alu inputs to be register file and IR
         alusel0 = ALUSEL0_REG;
         alusel1 = ALUSEL1_IR;
-        rs1_sel = RS1;
+        rs1sel = RS1;
 
         // add RS1 + IMM to calculate memory address 
         op = ADD;
@@ -121,7 +123,7 @@ module ControlUnit(
         state_d = PART2;
       end
 
-      // LOAD instructions (Part 2)
+      // LOAD instruction (Part 2)
       {LOAD, BYTE , 7'b???_????, PART2}, {LOAD, HALF  , 7'b???_????, PART2},
       {LOAD, WORD , 7'b???_????, PART2}, {LOAD, BYTEU , 7'b???_????, PART2},
       {LOAD, HALFU, 7'b???_????, PART2}: begin
@@ -137,10 +139,10 @@ module ControlUnit(
         // set alu inputs to be register file and IR
         alusel0 = ALUSEL0_REG;
         //alusel1 does not matter
-        rs1_sel = RSD;
+        rs1sel = RSD;
 
-        // add RS1 + IMM to calculate memory address 
-        op = operation_t'({instruction.funct3, instruction.funct7});
+        // ALU will truncate rd depending on ir.funct3
+        op = operation_t'({ir.funct3, ir.funct7});
 
         // next state
         state_d = PART1;
@@ -149,8 +151,8 @@ module ControlUnit(
       // Store Instructions (Part 1)
       
       default: begin
-        
-        $display("Error");
+        $error("%h is an invalid instruction cooresponding to state %s", ir, state.name);
+        state_d = FETCH;
       end
     endcase
   end
