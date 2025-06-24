@@ -95,12 +95,6 @@ typedef enum logic[9:0] {
   SLTU  = {3'h3, 7'h00}
 } operation_t;
 
-typedef struct packed {
-  opcode_t opcode;
-  logic[2:0] funct3;
-  logic[6:0] funct7;
-} instruction_t;
-
 typedef enum logic {
   RS1 = 1'b0,
   RSD = 1'b1
@@ -111,8 +105,18 @@ typedef enum logic {
   TMPSEL_HALF = 1'b1
 } tmpsel_t;
 
-typedef enum logic {
-  DATAINSEL_ALU = 1'b0,
-  DATAINSEL_TMP = 1'b1
-} datainsel_t;
+typedef enum logic[1:0] {
+  DATAOUTSEL_ALU = 2'h0,
+  DATAOUTSEL_TMP = 2'h1,
+  DATAOUTSEL_REG = 2'h2
+} dataoutsel_t;
+
+typedef enum logic[2:0] {
+  BEQ = 3'h0,
+  BNE = 3'h1,
+  BLT = 3'h4,
+  BGE = 3'h5,
+  BLTU = 3'h6,
+  BGEU = 3'h7
+} branch_t;
 
