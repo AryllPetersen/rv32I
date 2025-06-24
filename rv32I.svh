@@ -10,6 +10,14 @@ typedef enum logic[6:0] {
   AUIPC   = 7'b0010111
 } opcode_t;
 
+typedef enum logic[2:0] {
+  BYTE  = 3'h0,
+  HALF  = 3'h1,
+  WORD  = 3'h2,
+  BYTEU = 3'h4,
+  HALFU = 3'h5
+} load_t;
+
 typedef enum logic[1:0] {
   PCSEL_PC = 2'h0,
   PCSEL_PLUS4 = 2'h1,
@@ -74,18 +82,18 @@ typedef struct packed {
   opcode_t opcode;
 } ir_U_t;
 
-typedef enum logic[3:0] {
-  ADD,
-  SUB,
-  XOR,
-  OR,
-  AND,
-  SLL,
-  SRL,
-  SRA,
-  SLT,
-  SLTU
-} operations_t;
+typedef enum logic[9:0] {
+  ADD   = {3'h0, 7'h00},
+  SUB   = {3'h0, 7'h20},
+  XOR   = {3'h4, 7'h00},
+  OR    = {3'h6, 7'h00},
+  AND   = {3'h7, 7'h00},
+  SLL   = {3'h1, 7'h00},
+  SRL   = {3'h5, 7'h00},
+  SRA   = {3'h5, 7'h20},
+  SLT   = {3'h2, 7'h00},
+  SLTU  = {3'h3, 7'h00}
+} operation_t;
 
 typedef struct packed {
   opcode_t opcode;
@@ -93,4 +101,15 @@ typedef struct packed {
   logic[6:0] funct7;
 } instruction_t;
 
+typedef enum logic {
+  RS1 = 1'b0,
+  RSD = 1'b1,
+} rs1sel_t;
+
+typedef enum logic[1:0]{
+  FETCH = 2'h0,
+  PART1 = 2'h1,
+  PART2 = 2'h2,
+  PART3 = 2'h3
+} state_t;
 
