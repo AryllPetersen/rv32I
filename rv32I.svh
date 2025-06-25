@@ -15,7 +15,8 @@ typedef enum logic[2:0] {
   HALF  = 3'h1,
   WORD  = 3'h2,
   BYTEU = 3'h4,
-  HALFU = 3'h5
+  HALFU = 3'h5,
+  ADDRESS =  3'h6
 } load_t;
 
 typedef enum logic[1:0] {

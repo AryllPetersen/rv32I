@@ -127,7 +127,7 @@ module ControlUnit(
         rs1sel = RS1;
 
         // add RS1 + IMM to calculate memory address 
-        op = ADD;
+        op = operation_t'({ADDRESS, 7'h00});
 
         //tmpsel does not matter
         //dataoutsel does not matter
@@ -179,8 +179,7 @@ module ControlUnit(
         alusel1 = ALUSEL1_IR;
         rs1sel = RS1;
 
-        // RS1 + IMM
-        op = ADD;
+        // op does not matter, ALU gets information from opcode
 
         // select value to store in temporary register
         tmpsel = (ir.funct3 == BYTE) ? TMPSEL_BYTE : TMPSEL_HALF;
@@ -206,8 +205,7 @@ module ControlUnit(
         alusel1 = ALUSEL1_IR;
         rs1sel = RS1;
 
-        // RS1 + IMM
-        op = ADD;
+        // op does not matter, ALU gets information from opcode
 
         //tmpsel does not matter
 
@@ -233,8 +231,7 @@ module ControlUnit(
         alusel1 = ALUSEL1_IR;
         rs1sel = RS1;
 
-        // RS1 + IMM
-        op = ADD;
+        // op does not matter, ALU gets information from opcode
 
         //tmpsel does not matter
 
@@ -271,8 +268,7 @@ module ControlUnit(
         alusel1 = ALUSEL1_IR;
         rs1sel = RS1;
 
-        // PC + IMM
-        op = ADD;
+        // op does not matter, ALU gets information from opcode
 
         //tmpsel does not matter
         //dataoutsel does not matter
@@ -295,8 +291,7 @@ module ControlUnit(
         alusel1 = ALUSEL1_IR;
         rs1sel = RS1;
 
-        // PC + IMM
-        op = ADD;
+        // op does not matter, ALU gets information from opcode
 
         //tmpsel does not matter
         //dataoutsel does not matter
@@ -346,3 +341,6 @@ module ControlUnit(
       state <= state_d;
   end
 endmodule
+
+
+
