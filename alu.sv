@@ -1,6 +1,6 @@
 `default_nettype none
 
-module ALU(
+module Alu(
   input logic[31:0] A, B,
   input opcode_t opcode,
   input operation_t op,
