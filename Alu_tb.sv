@@ -295,14 +295,14 @@ module Alu_tb();
     // OP SLL Test
     tmp = new(OP, SLL, "OP SLL Test");
     tmp.add(.A(32'd0), .B(32'd0), .expected(32'd0));
-    tmp.add(.A(32'd1), .B(32'd1), .expected(32'd10));
+    tmp.add(.A(32'd1), .B(32'd1), .expected(32'b10));
     tmp.add(.A(32'b101), .B(32'b10), .expected(32'b10100));
 
     repeat(100) begin
       tcase = new();
       tcase.A = $urandom_range(32'd0, 32'hFFFF_FFFF);
       tcase.B = $urandom_range(32'd0, 32'hFFFF_FFFF);
-      tcase.expected = tcase.A << tcase.B[4:0];
+      tcase.expected = tcase.A << tcase.B;
       tmp.add(.A(tcase.A), .B(tcase.B), .expected(tcase.expected));
     end
 
@@ -319,7 +319,7 @@ module Alu_tb();
       tcase = new();
       tcase.A = $urandom_range(32'd0, 32'hFFFF_FFFF);
       tcase.B = $urandom_range(32'd0, 32'hFFFF_FFFF);
-      tcase.expected = tcase.A >> tcase.B[4:0];
+      tcase.expected = tcase.A >> tcase.B;
       tmp.add(.A(tcase.A), .B(tcase.B), .expected(tcase.expected));
     end
 
@@ -336,7 +336,7 @@ module Alu_tb();
       tcase = new();
       tcase.A = $urandom_range(32'd0, 32'hFFFF_FFFF);
       tcase.B = $urandom_range(32'd0, 32'hFFFF_FFFF);
-      tcase.expected = $signed(tcase.A) >>> tcase.B[4:0];
+      tcase.expected = $signed(tcase.A) >>> tcase.B;
       tmp.add(.A(tcase.A), .B(tcase.B), .expected(tcase.expected));
     end
 
@@ -416,7 +416,7 @@ module Alu_tb();
       tcase.A = $urandom_range(32'd0, 32'hFFFF_FFFF);
       imm = sext_12($urandom_range(12'd0, 12'hFFF));
       tcase.B = imm_I(imm[11:0]);
-      tcase.expected = tcase.A + imm;
+      tcase.expected = tcase.A ^ imm;
       tmp.add(.A(tcase.A), .B(tcase.B), .expected(tcase.expected));
     end
 
@@ -459,7 +459,7 @@ module Alu_tb();
     // OPIMM SLL Test
     tmp = new(OPIMM, SLL, "OPIMM SLL Test");
     tmp.add(.A(32'd0), .B(imm_I(12'd0)), .expected(32'd0));
-    tmp.add(.A(32'd1), .B(imm_I(12'd1)), .expected(32'd10));
+    tmp.add(.A(32'd1), .B(imm_I(12'd1)), .expected(32'b10));
     tmp.add(.A(32'b101), .B(imm_I(12'b10)), .expected(32'b10100));
 
     repeat(100) begin
@@ -660,12 +660,12 @@ module Alu_tb();
     // Branch
     tmp = new(BRANCH, operation_t'(10'd0), "BRANCH Test");
     tmp.add(.A(32'd0), .B(imm_B(13'd0)), .expected(32'd0));
-    tmp.add(.A(32'd1), .B(imm_B(13'd3)), .expected(32'd2));
+    tmp.add(.A(32'd1), .B(imm_B(13'd6)), .expected(32'd7));
     tmp.add(.A(32'd5), .B(imm_B(13'd0)), .expected(32'd5));
     tmp.add(.A(32'd0), .B(imm_B(13'd8)), .expected(32'd8));
     tmp.add(.A(32'hFFFF_FFFF), .B(imm_B(13'd2)), .expected(32'd1));
     tmp.add(.A(32'hFFFF_FFFF), .B(imm_B(13'h1FFE)), .expected(32'hFFFF_FFFD));
-    tmp.add(.A(32'h8000_0000), .B(imm_B(13'd2)), .expected(32'h8000_0000));
+    tmp.add(.A(32'h8000_0000), .B(imm_B(13'd2)), .expected(32'h8000_0002));
 
     repeat(100) begin
       tcase = new();
@@ -686,7 +686,7 @@ module Alu_tb();
     tmp.add(.A(32'd0), .B(imm_J(21'd8)), .expected(32'd8));
     tmp.add(.A(32'hFFFF_FFFF), .B(imm_J(21'd2)), .expected(32'd1));
     tmp.add(.A(32'hFFFF_FFFF), .B(imm_J(21'h1F_FFFE)), .expected(32'hFFFF_FFFD));
-    tmp.add(.A(32'h8000_0000), .B(imm_J(21'd2)), .expected(32'h8000_0000));
+    tmp.add(.A(32'h8000_0000), .B(imm_J(21'd2)), .expected(32'h8000_0002));
 
     repeat(100) begin
       tcase = new();

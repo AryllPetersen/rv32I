@@ -20,12 +20,7 @@ module ControlUnit(
   output logic un_signed
 );
 
-  enum logic[1:0]{
-    FETCH = 2'h0, // no instruction is currently loaded and needs to be fetched
-    PART1 = 2'h1, // 1st part of an instruction
-    PART2 = 2'h2, // 2nd part of an instruction
-    HALT  = 2'h3  // an error occurred and the FSM will stop until reset
-  } state, state_d;
+  state_t state, state_d;
 
   assign un_signed = (ir.funct3 == BLTU || ir.funct3 == BGEU);
 
@@ -79,11 +74,11 @@ module ControlUnit(
       end  
 
       // OPIMM instructions
-      {OP, ADD[9:7] , 7'b???_????, PART1}, {OP, XOR[9:7], 7'b???_????, PART1}, 
-      {OP, OR[9:7]  , 7'b???_????, PART1}, {OP, AND[9:7], 7'b???_????, PART1}, 
-      {OP, SLL                   , PART1}, {OP, SRL                  , PART1}, 
-      {OP, SRA                   , PART1}, {OP, SLT[9:7], 7'b???_????, PART1}, 
-      {OP, SLTU[9:7], 7'b???_????, PART1}: begin
+      {OPIMM, ADD[9:7] , 7'b???_????, PART1}, {OPIMM, XOR[9:7], 7'b???_????, PART1}, 
+      {OPIMM, OR[9:7]  , 7'b???_????, PART1}, {OPIMM, AND[9:7], 7'b???_????, PART1}, 
+      {OPIMM, SLL                   , PART1}, {OPIMM, SRL                  , PART1}, 
+      {OPIMM, SRA                   , PART1}, {OPIMM, SLT[9:7], 7'b???_????, PART1}, 
+      {OPIMM, SLTU[9:7], 7'b???_????, PART1}: begin
         
         // get new instruction
         {pcsel, irsel, addrsel, re, we} = 
@@ -191,7 +186,7 @@ module ControlUnit(
       end
 
       // Store (BYTE | HALF) Instruction (Part 2)
-      {STORE, BYTE, 7'b???_????, PART1}, {STORE, HALF, 7'b???_????, PART1}: begin
+      {STORE, BYTE, 7'b???_????, PART2}, {STORE, HALF, 7'b???_????, PART2}: begin
 
         // write value to memory at address calculated by ALU
         {pcsel, irsel, addrsel, re, we} = 

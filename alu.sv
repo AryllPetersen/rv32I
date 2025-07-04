@@ -32,15 +32,15 @@ module Alu(
           AND:    aluout = A & B;
           SLL:    aluout = A << B;
           SRL:    aluout = A >> B;
-          SRA:    aluout = A >>> B;
-          SLT:    aluout = (A < B) ? 32'h1 : 32'h0; 
+          SRA:    aluout = $signed(A) >>> B;
+          SLT:    aluout = ($signed(A) < $signed(B)) ? 32'h1 : 32'h0; 
           SLTU:   aluout = ($unsigned(A) < $unsigned(B)) ? 32'h1 : 32'h0; 
           default: aluout = '0;
         endcase
       end
 
       OPIMM: begin
-        imm = {20'd0, ir_I.imm};
+        imm = ir_I.imm[11] ? {20'hF_FFFF, ir_I.imm} : {20'd0, ir_I.imm};
         case(op) inside
           {ADD[9:7], 7'b???_????}:  aluout = A + imm;
           {XOR[9:7], 7'b???_????}:  aluout = A ^ imm;
@@ -48,19 +48,20 @@ module Alu(
           {AND[9:7], 7'b???_????}:  aluout = A & imm;
           SLL: aluout = A << imm[4:0];
           SRL: aluout = A >> imm[4:0];
-          SRA: aluout = A >>> imm[4:0];
-          {SLT[9:7], 7'b???_????}:  aluout = (A < imm) ? 32'h1 : 32'h0; 
-          {SLTU[9:7], 7'b???_????}: aluout = ($unsigned(A) < $unsigned(imm)) ? 32'h1 : 32'h0; 
+          SRA: aluout = $signed(A) >>> imm[4:0];
+          {SLT[9:7], 7'b???_????}:  aluout = ($signed(A) < $signed(imm)) ? 32'h1 : 32'h0; 
+          {SLTU[9:7], 7'b???_????}: aluout = ($unsigned(A) < $unsigned({20'd0, ir_I.imm})) ? 32'h1 : 32'h0; 
           default: aluout = '0;
         endcase
       end
 
       LOAD: begin
-        imm = {20'd0, ir_I.imm};
+        imm = ir_I.imm[11] ? {20'hF_FFFF, ir_I.imm} : {20'd0, ir_I.imm};
         case(op[9:7])
           ADDRESS:  aluout = A + imm;
           BYTE:     aluout = A[7] ? {24'hFFFFFF, A[7:0]} : {24'd0, A[7:0]};
-          WORD:     aluout = A[15] ? {16'hFFFF, A[15:0]} : {16'd0, A[15:0]};
+          HALF:     aluout = A[15] ? {16'hFFFF, A[15:0]} : {16'd0, A[15:0]};
+          WORD:     aluout = A;
           BYTEU:    aluout = {24'd0, A[7:0]};
           HALFU:    aluout = {16'd0, A[15:0]};
           default:  aluout = '0;
@@ -81,7 +82,7 @@ module Alu(
       JAL: begin
         imm = {11'd0, ir_U.imm[19], ir_U.imm[7:0], 
                ir_U.imm[8], ir_U.imm[18:9], 1'b0};
-        aluout = A + ((imm[20]) ? {11'h3FF, imm[20:0]}: imm);
+        aluout = A + ((imm[20]) ? {11'h7FF, imm[20:0]}: imm);
       end
 
       JALR: begin
@@ -96,7 +97,7 @@ module Alu(
 
       AUIPC: begin
         imm = {12'd0, ir_U.imm};
-        aluout = A + imm << 12;
+        aluout = A + (imm << 12);
       end
 
       default: aluout = '0;

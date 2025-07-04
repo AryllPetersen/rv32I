@@ -107,9 +107,8 @@ typedef enum logic {
 } tmpsel_t;
 
 typedef enum logic[1:0] {
-  DATAOUTSEL_ALU = 2'h0,
-  DATAOUTSEL_TMP = 2'h1,
-  DATAOUTSEL_REG = 2'h2
+  DATAOUTSEL_TMP = 2'h0,
+  DATAOUTSEL_REG = 2'h1
 } dataoutsel_t;
 
 typedef enum logic[2:0] {
@@ -120,4 +119,11 @@ typedef enum logic[2:0] {
   BLTU = 3'h6,
   BGEU = 3'h7
 } branch_t;
+
+typedef enum logic[1:0] {
+  FETCH = 2'h0, // no instruction is currently loaded and needs to be fetched
+  PART1 = 2'h1, // 1st part of an instruction
+  PART2 = 2'h2, // 2nd part of an instruction
+  HALT  = 2'h3  // an error occurred and the FSM will stop until reset
+} state_t;
 
