@@ -1,5 +1,8 @@
-# rv32I
+# Project Description
 
+A RISCV 32 Base Integer CPU created in SystemVerilog. All user mode instructions have been implemented, ecall / ebreak is not implemented. The Design was verified by building an Alu testbench ([Alu_tb.sv](https://github.com/AryllPetersen/rv32I/blob/main/Alu_tb.sv)) and a Control Unit testbench ([ControlUnit_tb.sv](https://github.com/AryllPetersen/rv32I/blob/main/ControlUnit_tb.sv)). It was further verified by running machine code on it, the compiler used can be found [here](https://xpack-dev-tools.github.io/riscv-none-elf-gcc-xpack/docs/install/) and details of running the code yourself are in the [Running Code Example](#running-code-example) section.
+
+## Schematic
 ![schematic](https://github.com/AryllPetersen/rv32I/blob/main/schematic.png?raw=true)
 
 # Running Code Example
