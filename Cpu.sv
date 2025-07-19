@@ -74,7 +74,7 @@ module Cpu(
   };
   assign tmp = {tmp_Q, Q1[7:0]};
 
-  assign address = (ADDRSEL_ALU) ? aluout : pcplus4;
+  assign address = (addrsel == ADDRSEL_ALU) ? aluout : pcplus4;
 
   ControlUnit cu(
     .clock,
@@ -98,7 +98,7 @@ module Cpu(
     .un_signed
   );
 
-  RegisterSimple #(32) PC(
+  RegisterSimple #(.WIDTH(32), .INIT(-4)) PC(
     .clock,
     .resetn,
     .D(pc_D),
@@ -124,7 +124,7 @@ module Cpu(
     .resetn,
     .D,
     .sel0,
-    .sel1(ir.rs1),
+    .sel1(ir.rs2),
     .selin(ir.rd),
     .en(regen),
     .Q0,
@@ -161,10 +161,10 @@ endmodule
 
 /*
   Register with no enable input.
-  Asyncronously resets to 0
+  Asyncronously resets to INIT
 */
 module RegisterSimple
-#(parameter WIDTH = 32)
+#(parameter WIDTH = 32, parameter INIT = 0)
 (
   input logic clock, 
   input logic resetn,
@@ -173,7 +173,7 @@ module RegisterSimple
 );
   always_ff @(posedge clock, negedge resetn) begin
     if(~resetn) begin
-      Q <= '0;
+      Q <= INIT;
     end else begin
       Q <= D;
     end

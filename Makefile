@@ -1,0 +1,2 @@
+simv: rv32I.svh ControlUnit.sv Alu.sv MagComp.sv RegisterFile.sv BusDriver.sv Cpu.sv Memory.sv Top.sv
+	vcs -sverilog rv32I.svh ControlUnit.sv Alu.sv MagComp.sv RegisterFile.sv BusDriver.sv Cpu.sv Memory.sv Top.sv -debug
