@@ -10,7 +10,7 @@ Enter /example and run `make`. It will run the simulation where it prints out ea
 ![code](https://github.com/AryllPetersen/rv32I/blob/main/code.jpg?raw=true)
 
 ## Example output
-![output](https://github.com/AryllPetersen/rv32I/blob/main/output.jpg?raw=true)
+![output](https://github.com/AryllPetersen/rv32I/blob/main/output_v2.jpg?raw=true)
 
 ## what does each file in /example do?
 
